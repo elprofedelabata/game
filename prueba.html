@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Prueba Canvas</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #111;
+      color: #fff;
+      font-family: "Segoe UI", Arial, sans-serif;
+      display: flex;
+      min-height: 100vh;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    canvas {
+      border: 2px solid #444;
+      background-color: #1b1b1b;
+      width: min(90vw, 700px);
+      height: min(70vh, 450px);
+      box-shadow: 0 0 20px rgba(255, 80, 0, 0.3);
+    }
+
+    #info {
+      margin-top: 1rem;
+      text-align: center;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="800" height="520"></canvas>
+  <div id="info">Ejemplo simple: animación, tablero y texto dinámico.</div>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    const gridSize = 64;
+    const cols = 8;
+    const rows = 6;
+
+    const player = {
+      x: 2,
+      y: 3,
+      color: "#ff9a28",
+      sparkle: 0
+    };
+
+    const enemy = {
+      x: 5,
+      y: 2,
+      color: "#3da4ff",
+      frame: 0
+    };
+    const preview = {
+      active: false,
+      targetX: enemy.x,
+      targetY: enemy.y
+    };
+    const mouse = { down: false };
+    const highlight = [];
+
+    function drawGrid() {
+      ctx.strokeStyle = "#2e2e2e";
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= cols; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * gridSize, 0);
+        ctx.lineTo(i * gridSize, rows * gridSize);
+        ctx.stroke();
+      }
+      for (let i = 0; i <= rows; i++) {
+        ctx.beginPath();
+        ctx.moveTo(0, i * gridSize);
+        ctx.lineTo(cols * gridSize, i * gridSize);
+        ctx.stroke();
+      }
+    }
+
+    function drawCharacter(unit) {
+      const { x, y, color } = unit;
+      const px = x * gridSize + gridSize / 2;
+      const py = y * gridSize + gridSize / 2;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(px, py, gridSize / 2.6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#111";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+
+    function drawSparkle() {
+      ctx.save();
+      ctx.translate(player.x * gridSize + gridSize / 2, player.y * gridSize + gridSize / 2);
+      ctx.rotate(player.sparkle);
+      ctx.strokeStyle = "#ffe18c";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(-20, 0);
+      ctx.lineTo(20, 0);
+      ctx.moveTo(0, -20);
+      ctx.lineTo(0, 20);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawText() {
+      ctx.save();
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 22px Segoe UI";
+      ctx.fillText("Combate en curso", 16, canvas.height - 64);
+      ctx.font = "14px Segoe UI";
+      ctx.fillText("Turno 04 · Suerte = 3 · Enfriamiento restante: 1", 16, canvas.height - 42);
+      ctx.restore();
+    }
+
+    function getPathCells(start, end) {
+      const cells = [];
+      let x = start.x;
+      let y = start.y;
+      const dx = Math.sign(end.x - start.x);
+      const dy = Math.sign(end.y - start.y);
+      while (x !== end.x) {
+        x += dx;
+        cells.push({ x, y });
+      }
+      while (y !== end.y) {
+        y += dy;
+        cells.push({ x, y });
+      }
+      return cells;
+    }
+
+    function highlightPath() {
+      const path = getPathCells({ x: enemy.x, y: enemy.y }, { x: preview.targetX, y: preview.targetY });
+      const len = path.length;
+      ctx.save();
+      ctx.fillStyle = "rgba(61, 164, 255, 0.18)";
+      for (const cell of path) {
+        ctx.fillRect(cell.x * gridSize + 4, cell.y * gridSize + 4, gridSize - 8, gridSize - 8);
+      }
+      ctx.fillStyle = "rgba(61, 164, 255, 0.6)";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 6]);
+      ctx.beginPath();
+      const startX = enemy.x * gridSize + gridSize / 2;
+      const startY = enemy.y * gridSize + gridSize / 2;
+      ctx.moveTo(startX, startY);
+      for (const cell of path) {
+        ctx.lineTo(cell.x * gridSize + gridSize / 2, cell.y * gridSize + gridSize / 2);
+      }
+      ctx.stroke();
+      ctx.restore();
+      if (path.length) {
+        const last = path[path.length - 1];
+        ctx.save();
+        ctx.fillStyle = "#fff";
+        ctx.font = "14px Segoe UI";
+        ctx.fillText(`Pasos: ${len}`, last.x * gridSize + 8, last.y * gridSize + 20);
+        ctx.restore();
+      }
+    }
+
+    function cellFromMouse(event) {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const x = Math.floor(((event.clientX - rect.left) * scaleX) / gridSize);
+      const y = Math.floor(((event.clientY - rect.top) * scaleY) / gridSize);
+      return {
+        x: Math.max(0, Math.min(cols - 1, x)),
+        y: Math.max(0, Math.min(rows - 1, y))
+      };
+    }
+
+    function startDrag(event) {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const mx = (event.clientX - rect.left) * scaleX;
+      const my = (event.clientY - rect.top) * scaleY;
+      const cx = enemy.x * gridSize + gridSize / 2;
+      const cy = enemy.y * gridSize + gridSize / 2;
+      const dist = Math.hypot(mx - cx, my - cy);
+      if (dist <= gridSize / 2.5) {
+        mouse.down = true;
+        preview.active = true;
+        preview.targetX = enemy.x;
+        preview.targetY = enemy.y;
+      }
+    }
+
+    function updateDrag(event) {
+      if (!mouse.down || !preview.active) {
+        return;
+      }
+      const cell = cellFromMouse(event);
+      preview.targetX = cell.x;
+      preview.targetY = cell.y;
+    }
+
+    function endDrag(event) {
+      if (mouse.down && preview.active) {
+        mouse.down = false;
+        preview.active = false;
+        enemy.x = preview.targetX;
+        enemy.y = preview.targetY;
+      }
+    }
+
+    canvas.addEventListener("mousedown", startDrag);
+    canvas.addEventListener("mousemove", updateDrag);
+    window.addEventListener("mouseup", endDrag);
+
+    function update(delta) {
+      player.sparkle += delta * 0.002;
+      enemy.frame += delta * 0.005;
+      if (enemy.frame >= Math.PI * 2) {
+        enemy.frame -= Math.PI * 2;
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawGrid();
+      drawCharacter(player);
+      if (preview.active) {
+        highlightPath();
+      }
+      drawSparkle();
+      drawCharacter({ ...enemy, x: preview.active ? preview.targetX : enemy.x, y: preview.active ? preview.targetY : enemy.y });
+      ctx.save();
+      ctx.fillStyle = "rgba(255,69,0,0.25)";
+      ctx.fillRect(player.x * gridSize, player.y * gridSize, gridSize * 2, gridSize * 1.5);
+      ctx.restore();
+      ctx.save();
+      ctx.fillStyle = "rgba(255,255,255,0.1)";
+      ctx.fillRect(enemy.x * gridSize, enemy.y * gridSize, gridSize, gridSize);
+      ctx.restore();
+      drawText();
+    }
+
+    let lastTime = 0;
+    function loop(timestamp) {
+      const delta = timestamp - lastTime;
+      lastTime = timestamp;
+      update(delta);
+      draw();
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>

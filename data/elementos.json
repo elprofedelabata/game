@@ -1,0 +1,14 @@
+{
+  "documentType": "elementos",
+  "version": "0.1",
+  "description": "Listado de los siete elementos principales con su identificador.",
+  "elements": [
+    { "id": 1, "nombre": "fuego" },
+    { "id": 2, "nombre": "tierra" },
+    { "id": 3, "nombre": "eléctrico" },
+    { "id": 4, "nombre": "natura" },
+    { "id": 5, "nombre": "agua" },
+    { "id": 6, "nombre": "hielo" },
+    { "id": 7, "nombre": "aire" }
+  ]
+}

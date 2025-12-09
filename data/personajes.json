@@ -1,0 +1,33 @@
+{
+  "documentType": "personajes",
+  "version": "0.1",
+  "description": "Ficha base de personajes jugables.",
+  "characters": [
+    {
+      "id": 1,
+      "nombre": "Pierre",
+      "clase": "Piromántico",
+      "elementoId": 1,
+      "descripcion": "El piromántico es un hechicero especializado en infligir pequeñas cantidades de daño de fuego a varios enemigos simultáneamente; es muy útil para controlar grupos de criaturas débiles.",
+      "stats": {
+        "pv_max": 60,
+        "pot": 5,
+        "res": 2,
+        "agi": 2,
+        "sue": 3
+      },
+      "pasiva": {
+        "nombre": "¡PIROMANÍA!",
+        "descripcion": "Pierre obtiene +1 AGILIDAD y acelera en (1) todas sus acciones por cada personaje QUEMADO. A diferencia de otros personajes de fuego, Pierre puede ser quemado, pero no sufre los efectos de ese estado (aunque sí se beneficia del resto de bonificaciones de esta pasiva)."
+      },
+      "rolDistribucion": {
+        "DPS": 70,
+        "Tanque": 0,
+        "Sanador": 0,
+        "Buffer": 10,
+        "Debuffer": 20
+      },
+      "beneficios": []
+    }
+  ]
+}

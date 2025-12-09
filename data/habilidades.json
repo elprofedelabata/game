@@ -1,0 +1,206 @@
+{
+  "documentType": "habilidades",
+  "version": "0.1",
+  "description": "Catálogo general de habilidades de personajes.",
+  "abilities": [
+    {
+      "id": 1041,
+      "nombre": "Deflagración",
+      "id_elemento": 1,
+      "id_clase": 1,
+      "momento": 5,
+      "enfriamiento": 2,
+      "caras": {
+        "CABEZA": true,
+        "PECHO": true,
+        "MANO_IZQUIERDA": false,
+        "MANO_DERECHA": false,
+        "PIERNAS": false,
+        "PIES": false
+      },
+      "resultados": {
+        "exito_absoluto": {
+          "descripcion": "Emite una llamarada que inflige 30 DAÑO FUEGO a todos los enemigos alrededor de Pierre. Si alguno muere a causa de este daño, repite este efecto al comienzo del siguiente turno."
+        },
+        "exito": {
+          "descripcion": "Emite una llamarada que inflige 20 DAÑO FUEGO a todos los enemigos alrededor de Pierre. Si alguno muere a causa de este daño, repite este efecto al comienzo del siguiente turno."
+        },
+        "exito_parcial": {
+          "descripcion": "Emite una llamarada que inflige 10 DAÑO FUEGO a todos los enemigos alrededor de Pierre."
+        },
+        "fracaso_absoluto": {
+          "descripcion": "La deflagración se vuelve contra todos los aliados y les inflige 10 DAÑO FUEGO."
+        },
+        "efecto_automatico": {
+          "descripcion": ""
+        }
+      }
+    },
+    {
+      "id": 1042,
+      "nombre": "Ola de calor",
+      "id_elemento": 1,
+      "id_clase": 1,
+      "momento": 6,
+      "enfriamiento": 1,
+      "caras": {
+        "CABEZA": true,
+        "PECHO": true,
+        "MANO_IZQUIERDA": false,
+        "MANO_DERECHA": false,
+        "PIERNAS": false,
+        "PIES": false
+      },
+      "resultados": {
+        "exito_absoluto": {
+          "descripcion": "Aplica QUEMADO a todos los enemigos alrededor de Pierre; a los que ya estuvieran QUEMADOS, les inflige 50 DAÑO FUEGO."
+        },
+        "exito": {
+          "descripcion": "Aplica QUEMADO a todos los enemigos alrededor de Pierre; a los que ya estuvieran QUEMADOS, les inflige 30 DAÑO FUEGO."
+        },
+        "exito_parcial": {
+          "descripcion": "Aplica QUEMADO a todos los enemigos alrededor de Pierre; a los que ya estuvieran QUEMADOS, les inflige 10 DAÑO FUEGO."
+        },
+        "fracaso_absoluto": {
+          "descripcion": "Aplica QUEMADO a todos los aliados alrededor de Pierre."
+        },
+        "efecto_automatico": {
+          "descripcion": ""
+        }
+      }
+    },
+    {
+      "id": 1043,
+      "nombre": "Combustión espontánea",
+      "id_elemento": 1,
+      "id_clase": 1,
+      "momento": 4,
+      "enfriamiento": 2,
+      "caras": {
+        "CABEZA": false,
+        "PECHO": false,
+        "MANO_IZQUIERDA": true,
+        "MANO_DERECHA": true,
+        "PIERNAS": false,
+        "PIES": false
+      },
+      "resultados": {
+        "exito_absoluto": {
+          "descripcion": "Inflige 30 DAÑO FUEGO a un enemigo y aplica QUEMADO a dicho objetivo y a todos sus vecinos."
+        },
+        "exito": {
+          "descripcion": "Inflige 20 DAÑO FUEGO y aplica QUEMADO a un enemigo; si sobrevive, sus vecinos también quedan QUEMADOS."
+        },
+        "exito_parcial": {
+          "descripcion": "Inflige 10 DAÑO FUEGO y aplica QUEMADO a un enemigo."
+        },
+        "fracaso_absoluto": {
+          "descripcion": "La combustión se vuelve incontrolada: inflige 30 DAÑO PURO a Pierre y quema a sus aliados vecinos."
+        },
+        "efecto_automatico": {
+          "descripcion": ""
+        }
+      }
+    },
+    {
+      "id": 1044,
+      "nombre": "Zona quemada",
+      "id_elemento": 1,
+      "id_clase": 1,
+      "momento": 5,
+      "enfriamiento": 2,
+      "caras": {
+        "CABEZA": false,
+        "PECHO": false,
+        "MANO_IZQUIERDA": true,
+        "MANO_DERECHA": true,
+        "PIERNAS": false,
+        "PIES": false
+      },
+      "resultados": {
+        "exito_absoluto": {
+          "descripcion": "Calcina una casilla; al final del turno inflige 20 DAÑO FUEGO durante 4 turnos y luego se propaga a casillas vecinas con la duración restante."
+        },
+        "exito": {
+          "descripcion": "Calcina una casilla; al final del turno inflige 10 DAÑO FUEGO durante 3 turnos y luego se propaga a casillas vecinas con la duración restante."
+        },
+        "exito_parcial": {
+          "descripcion": "Calcina una casilla; al final del turno inflige 10 DAÑO FUEGO durante 2 turnos y luego se propaga a casillas vecinas con la duración restante."
+        },
+        "fracaso_absoluto": {
+          "descripcion": "Calcina la casilla donde acaba Pierre; al final del turno le inflige 40 DAÑO PURO."
+        },
+        "efecto_automatico": {
+          "descripcion": ""
+        }
+      }
+    },
+    {
+      "id": 1045,
+      "nombre": "Llama interior",
+      "id_elemento": 1,
+      "id_clase": 1,
+      "momento": 2,
+      "enfriamiento": 2,
+      "caras": {
+        "CABEZA": true,
+        "PECHO": true,
+        "MANO_IZQUIERDA": false,
+        "MANO_DERECHA": false,
+        "PIERNAS": false,
+        "PIES": false
+      },
+      "resultados": {
+        "exito_absoluto": {
+          "descripcion": ""
+        },
+        "exito": {
+          "descripcion": ""
+        },
+        "exito_parcial": {
+          "descripcion": ""
+        },
+        "fracaso_absoluto": {
+          "descripcion": ""
+        },
+        "efecto_automatico": {
+          "descripcion": "Inflige 10 DAÑO FUEGO a todos los aliados y los hace inmunes al daño de fuego durante 3 turnos."
+        }
+      }
+    }
+    ,
+    {
+      "id": 1046,
+      "nombre": "Sendero de brasas",
+      "id_elemento": 1,
+      "id_clase": 1,
+      "momento": 4,
+      "enfriamiento": 3,
+      "caras": {
+        "CABEZA": false,
+        "PECHO": false,
+        "MANO_IZQUIERDA": false,
+        "MANO_DERECHA": false,
+        "PIERNAS": true,
+        "PIES": true
+      },
+      "resultados": {
+        "exito_absoluto": {
+          "descripcion": ""
+        },
+        "exito": {
+          "descripcion": ""
+        },
+        "exito_parcial": {
+          "descripcion": ""
+        },
+        "fracaso_absoluto": {
+          "descripcion": ""
+        },
+        "efecto_automatico": {
+          "descripcion": "Pierre corre hasta 4 casillas en línea recta calcinando tanto las casillas por las que pasa como las adyacentes. Las casillas calcinadas infligen 20 DAÑO FUEGO al final del turno."
+        }
+      }
+    }
+  ]
+}

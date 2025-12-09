@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simulador de Batalla</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: #0c101d;
+      font-family: system-ui, sans-serif;
+      color: #f5f7ff;
+    }
+    #game-container {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+    .instructions {
+      position: absolute;
+      right: 1rem;
+      top: 1rem;
+      padding: 0.45rem 0.75rem;
+      border-radius: 0.75rem;
+      background: rgba(5, 9, 20, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container"></div>
+  <div class="instructions">
+    Arrastra con el botón derecho para rotar la cámara.<br />
+    El campo representa una rejilla isométrica de 15 x 10.
+  </div>
+  <script src="./node_modules/phaser/dist/phaser.min.js"></script>
+  <script>
+    window.addEventListener('contextmenu', (event) => event.preventDefault());
+
+    const TILE_WIDTH = 64;
+    const TILE_HEIGHT = 32;
+    const TILE_HALF_WIDTH = TILE_WIDTH / 2;
+    const TILE_HALF_HEIGHT = TILE_HEIGHT / 2;
+    const COLUMNS = 15;
+    const ROWS = 10;
+
+    class BattleScene extends Phaser.Scene {
+      constructor() {
+        super('battle-scene');
+      }
+
+      create() {
+        this.cameras.main.setBackgroundColor(0x0c101d);
+        this.graphics = this.add.graphics();
+        const gridBounds = this.drawIsometricGrid(COLUMNS, ROWS);
+        const { centerX, centerY } = gridBounds;
+        this.cameras.main.setZoom(1.1);
+        this.cameras.main.centerOn(centerX, centerY);
+        this.cameras.main.setBounds(
+          gridBounds.minX - TILE_WIDTH,
+          gridBounds.minY - TILE_HEIGHT,
+          gridBounds.maxX - gridBounds.minX + TILE_WIDTH * 2,
+          gridBounds.maxY - gridBounds.minY + TILE_HEIGHT * 2
+        );
+
+        this.isRotating = false;
+        this.lastPointerX = 0;
+
+        this.input.on('pointerdown', (pointer) => {
+          if (pointer.rightButtonDown()) {
+            this.isRotating = true;
+            this.lastPointerX = pointer.x;
+          }
+        });
+
+        this.input.on('pointerup', (pointer) => {
+          if (!pointer.rightButtonDown()) {
+            this.isRotating = false;
+          }
+        });
+
+        this.input.on('pointermove', (pointer) => {
+          if (this.isRotating) {
+            const deltaX = pointer.x - this.lastPointerX;
+            this.cameras.main.rotation += deltaX * 0.005;
+            this.lastPointerX = pointer.x;
+          }
+        });
+      }
+
+      drawIsometricGrid(cols, rows) {
+        const stats = {
+          minX: Number.POSITIVE_INFINITY,
+          minY: Number.POSITIVE_INFINITY,
+          maxX: Number.NEGATIVE_INFINITY,
+          maxY: Number.NEGATIVE_INFINITY
+        };
+
+        for (let row = 0; row < rows; row++) {
+          for (let col = 0; col < cols; col++) {
+            const isoX = (col - row) * TILE_HALF_WIDTH;
+            const isoY = (col + row) * TILE_HALF_HEIGHT;
+
+            stats.minX = Math.min(stats.minX, isoX - TILE_HALF_WIDTH);
+            stats.maxX = Math.max(stats.maxX, isoX + TILE_HALF_WIDTH);
+            stats.minY = Math.min(stats.minY, isoY - TILE_HALF_HEIGHT);
+            stats.maxY = Math.max(stats.maxY, isoY + TILE_HALF_HEIGHT);
+
+            this.graphics.lineStyle(2, 0x2ef0ff, 0.6);
+            this.graphics.fillStyle(0x131f32, 0.75);
+            this.graphics.beginPath();
+            this.graphics.moveTo(isoX, isoY - TILE_HALF_HEIGHT);
+            this.graphics.lineTo(isoX + TILE_HALF_WIDTH, isoY);
+            this.graphics.lineTo(isoX, isoY + TILE_HALF_HEIGHT);
+            this.graphics.lineTo(isoX - TILE_HALF_WIDTH, isoY);
+            this.graphics.closePath();
+            this.graphics.fillPath();
+            this.graphics.strokePath();
+          }
+        }
+
+        return {
+          minX: stats.minX,
+          maxX: stats.maxX,
+          minY: stats.minY,
+          maxY: stats.maxY,
+          centerX: (stats.minX + stats.maxX) / 2,
+          centerY: (stats.minY + stats.maxY) / 2
+        };
+      }
+    }
+
+    const config = {
+      type: Phaser.AUTO,
+      parent: 'game-container',
+      width: window.innerWidth,
+      height: window.innerHeight,
+      backgroundColor: '#0c101d',
+      scene: BattleScene
+    };
+
+    let game;
+
+    window.addEventListener('resize', () => {
+      if (game) {
+        game.scale.resize(window.innerWidth, window.innerHeight);
+      }
+    });
+
+    game = new Phaser.Game(config);
+  </script>
+</body>
+</html>
